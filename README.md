@@ -1,6 +1,6 @@
-# DE10 Nano Counter
+# DE10 Nano Z80 CPU
 
-A simple counter example written in VHDL for DE10 Nano.
+A simple Z80 CPU example written in VHDL for the D10 Nano
 
 Compiling:
 
