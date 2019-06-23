@@ -6,11 +6,15 @@ use ieee.numeric_std.all;
 entity z80 is
   port(
     clk : in std_logic;
+    key : in std_logic_vector(1 downto 0);
     led : out std_logic_vector(7 downto 0)
   );
 end z80;
 
 architecture arch of z80 is
+  -- clock
+  signal cpu_clk : std_logic;
+
   -- address bus
   signal cpu_addr	: std_logic_vector(15 downto 0);
 
@@ -32,11 +36,27 @@ architecture arch of z80 is
   -- write: the data bus contains a byte to write somewhere
   signal cpu_wr_n : std_logic;
 begin
+  clock_divider : process(clk)
+    variable n : unsigned(31 downto 0);
+  begin
+    if (rising_edge(clk)) then
+      n := n + 1;
+    end if;
+    cpu_clk <= not n(18);
+  end process;
+
+  rom : entity work.single_port_rom
+  generic map(ADDR_WIDTH => 16, DATA_WIDTH => 8)
+  port map(
+    clk => clk,
+    addr => cpu_addr,
+    data => cpu_di
+  );
+
   cpu : entity work.T80s
-  generic map(Mode => 0, T2Write => 1, IOWait => 1)
   port map(
     RESET_n => '1',
-    CLK_n   => not clk,
+    CLK_n   => cpu_clk,
     WAIT_n  => '1',
     INT_n   => '1',
     NMI_n   => '1',
@@ -54,5 +74,5 @@ begin
     DO      => cpu_do
   );
 
-  led <= cpu_addr(7 downto 0);
+  led <= cpu_addr(7 downto 0) when cpu_mreq_n = '0' and cpu_rd_n = '0';
 end arch;

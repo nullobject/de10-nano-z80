@@ -29,4 +29,6 @@ create_clock -name clk -period "50MHz" [get_ports clk]
 # its a single output port driving an LED, there are no timing relationships
 # that are critical for this
 
-set_false_path -from * -to [get_ports led]
+set_false_path -from * -to [get_ports {led*}]
+
+set_false_path -from [get_ports {key*}] -to *
