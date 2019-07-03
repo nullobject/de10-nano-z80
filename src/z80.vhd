@@ -1,10 +1,9 @@
 library ieee;
-
 use ieee.std_logic_1164.all;
 use ieee.numeric_std.all;
 
 entity z80 is
-  port(
+  port (
     clk : in std_logic;
     key : in std_logic_vector(1 downto 0);
     led : out std_logic_vector(7 downto 0)
@@ -39,7 +38,7 @@ begin
   clock_divider : process(clk)
     variable n : unsigned(31 downto 0);
   begin
-    if (rising_edge(clk)) then
+    if rising_edge(clk) then
       n := n + 1;
     end if;
     cpu_clk <= not n(18);
